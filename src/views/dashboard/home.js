@@ -241,7 +241,7 @@ class Home extends React.Component {
                 <Paper className={clsx(classes.paper, classes.fixedHeight)}>
                   <Typography>Page: {this.state.page}</Typography>
                   <Pagination count= {dataSearchBox && Math.ceil(dataSearchBox.data.total / dataSearchBox.data.limit)}
-                   page={this.state.page} onChange={this.handleChange.bind(this)} onClick={this.LoadingPage}
+                   page={this.state.page} onChange={this.handleChange.bind(this)} 
                    />
                   {console.log(this.state.page, "page")}
                   <br /><br />

@@ -14,7 +14,7 @@ import Grouped from "./auto_loai_hang_input";
 import Icon from "@material-ui/core/Icon";
 import NoteAddIcon from "@material-ui/icons/NoteAdd";
 import SearchIcon from "@material-ui/icons/Search";
-import { requestGetListCar, resquestGetListCarType, resquestGetListLoaiHang } from '../../api'
+import { requestGetListCar, resquestGetListCarType, resquestGetListLoaiHang, requestGetListLoaiXe } from '../../api'
 import { withStyles } from "@material-ui/core/styles";
 
 const useStyles = (theme) => ({
@@ -104,6 +104,8 @@ class SearchBox extends React.Component {sendData = (data) => {
       bienCont: "",
       bienMooc: "",
       orderNumber: "",
+      thongKeLoaiXe: "/Statistic/statisticCarInOut?",
+      data2: ""
     };
   }
   async list() {
@@ -129,10 +131,23 @@ class SearchBox extends React.Component {sendData = (data) => {
         BIENCONT: this.state.bienCont,
         BIENMOOC: this.state.bienMooc,
       })
-      await this.setState({ data: res.data, isLoading: false },()=>{
+      await this.setState({ data: res.data },()=>{
         this.sendData(res);
       });
-      console.log(res.data, "check data");
+      const res2 = await requestGetListLoaiXe({
+        FROMDATE: GetFormatDatePicker(this.state.fromDate),
+        TODATE: GetFormatDatePicker(this.state.toDate),
+        PLATENUMBER: this.state.plateNumber,
+        PORTOUT: this.state.PortOut,
+        PORTIN: this.state.portIn,
+        NUMBERCAR: this.state.numberCar,
+        LOAIHANG: this.state.loaiHang,
+        LOAIXE: this.state.loaiXe,
+        THONGKELOAIXE: this.state.thongKeLoaiXe,
+        BIENCONT: this.state.bienCont,
+        BIENMOOC: this.state.bienMooc,
+    })
+    await this.setState({data2: res2.data, isLoading: false})
     } catch (err) {
       await this.setState({
         isLoading: false
