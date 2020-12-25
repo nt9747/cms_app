@@ -1,271 +1,134 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import clsx from 'clsx';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { AutoSizer, Column, Table } from 'react-virtualized';
-import { requestGetListCar } from '../../api'
 
-
-
-const styles = (theme) => ({
-  flexContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    boxSizing: 'border-box',
-  },
+const useStyles = (theme) => ({
   table: {
-    // temporary right-to-left patch, waiting for
-    // https://github.com/bvaughn/react-virtualized/issues/454
-    '& .ReactVirtualized__Table__headerRow': {
-      flip: false,
-      paddingRight: theme.direction === 'rtl' ? '0 !important' : undefined,
-    },
-  },
-  tableRow: {
-    cursor: 'pointer',
-  },
-  tableRowHover: {
-    '&:hover': {
-      backgroundColor: theme.palette.grey[200],
-    },
-  },
-  tableCell: {
-    flex: 1,
-  },
-  noClick: {
-    cursor: 'initial',
+    minWidth: 650,
   },
 });
 
-class MuiVirtualizedTable extends React.PureComponent {
-  static defaultProps = {
-    headerHeight: 48,
-    rowHeight: 48,
-  };
+function GetFormatDate(a) {
+  const b = new Date(a);
+  var hours = b.getUTCHours();
+  var minutes = b.getUTCMinutes();
+  var seconds = b.getUTCSeconds();
+  var month = b.getUTCMonth() + 1;
+  var day = b.getUTCDate();
+  var year = b.getUTCFullYear();
 
-  getRowClassName = ({ index }) => {
-    const { classes, onRowClick } = this.props;
 
-    return clsx(classes.tableRow, classes.flexContainer, {
-      [classes.tableRowHover]: index !== -1 && onRowClick != null,
-    });
-  };
+  if (month.toString().length == 1) {
+    month = '0' + month;
+  }
+  if (day.toString().length == 1) {
+    day = '0' + day;
+  }
+  if (hours.toString().length == 1) {
+    hours = '0' + hours;
+  }
+  if (minutes.toString().length == 1) {
+    minutes = '0' + minutes;
+  }
+  if (seconds.toString().length == 1) {
+    seconds = '0' + seconds;
+  }
+  if (year == 1970) {
+    return ""
+  }
+  else return hours + ":" + minutes + ":" + seconds + "  " + day + "/" + month + "/" + year
+}
 
-  cellRenderer = ({ cellData, columnIndex }) => {
-    const { columns, classes, rowHeight, onRowClick } = this.props;
-    return (
-      <TableCell
-        component="div"
-        className={clsx(classes.tableCell, classes.flexContainer, {
-          [classes.noClick]: onRowClick == null,
-        })}
-        variant="body"
-        style={{ height: rowHeight }}
-        align={(columnIndex != null && columns[columnIndex].numeric) || false ? 'right' : 'left'}
-      >
-        {cellData}
-      </TableCell>
-    );
-  };
-
-  headerRenderer = ({ label, columnIndex }) => {
-    const { headerHeight, columns, classes } = this.props;
-
-    return (
-      <TableCell
-        component="div"
-        className={clsx(classes.tableCell, classes.flexContainer, classes.noClick)}
-        variant="head"
-        style={{ height: headerHeight }}
-        align={columns[columnIndex].numeric || false ? 'right' : 'left'}
-      >
-        <span>{label}</span>
-      </TableCell>
-    );
-  };
-
-  render() {
-    const { classes, columns, rowHeight, headerHeight, ...tableProps } = this.props;
-    return (
-      <AutoSizer>
-        {({ height, width }) => (
-          <Table
-            height={height}
-            width={width}
-            rowHeight={rowHeight}
-            gridStyle={{
-              direction: 'inherit',
-            }}
-            headerHeight={headerHeight}
-            className={classes.table}
-            {...tableProps}
-            rowClassName={this.getRowClassName}
-          >
-            {columns.map(({ dataKey, ...other }, index) => {
-              return (
-                <Column
-                  key={dataKey}
-                  headerRenderer={(headerProps) =>
-                    this.headerRenderer({
-                      ...headerProps,
-                      columnIndex: index,
-                    })
-                  }
-                  className={classes.flexContainer}
-                  cellRenderer={this.cellRenderer}
-                  dataKey={dataKey}
-                  {...other}
-                />
-              );
-            })}
-          </Table>
-        )}
-      </AutoSizer>
-    );
+function countMoney(n) {
+  n = parseFloat(n);
+  var b = n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,') + " vnd";
+  if (b == "NaN vnd") {
+    return ""
+  }
+  else {
+    return b;
   }
 }
 
-MuiVirtualizedTable.propTypes = {
-  classes: PropTypes.object.isRequired,
-  columns: PropTypes.arrayOf(
-    PropTypes.shape({
-      dataKey: PropTypes.string.isRequired,
-      label: PropTypes.string.isRequired,
-      numeric: PropTypes.bool,
-      width: PropTypes.number.isRequired,
-    }),
-  ).isRequired,
-  headerHeight: PropTypes.number,
-  onRowClick: PropTypes.func,
-  rowHeight: PropTypes.number,
-};
-
-const VirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
-
-// ---
-const sample = [
-  [14344, '29-3C159', 6456, 24644, 46540],
-];
-const rows = [];
-function createData(id, STT, Bienso, BienCont, BienMooc, protein) {
-  return { id, STT, Bienso, BienCont, BienMooc, protein };
-}
-for (let i = 0; i < 200; i += 1) {
-  const randomSelection = sample[Math.floor(Math.random() * sample.length)];
-  rows.push(createData(i, ...randomSelection));
-}
-
-class TongHop extends React.Component {
+class MuiVirtualizedTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataTable: "",
     };
+
   }
+
+
   handleTextChange(field, event) {
     this.setState({
       [field]: event.target.value,
     });
   }
-  render() { 
-  return (
-    <Paper style={{ height: 300, width: '160%' }}>
-      {console.log(this.props.dataFromHome, "check data table")}
-      <VirtualizedTable
-        rowCount={rows.length}
-        rowGetter={({ index }) => rows[index]}
-        columns={[
-          {
-            width: 200,
-            label: 'STT',
-            dataKey: 'id',
-          },
-          {
-            width: 200,
-            label: 'STT vào bãi',
-            dataKey: 'STT',
-          },
-          {
-            width: 200,
-            label: 'Biển số xe vào/ra',
-            dataKey: 'Bienso',
-          },
-          {
-            width: 200,
-            label: 'Biển Cont',
-            dataKey: 'BienCont',
-          },
-          {
-            width: 200,
-            label: 'Biển Mooc',
-            dataKey: 'BienMooc',
-          },
-          {
-            width: 200,
-            label: 'Loại xe',
-            dataKey: '',
-          },
-          {
-            width: 200,
-            label: 'Mã số thẻ',
-            dataKey: '',
-          },
-          {
-            width: 200,
-            label: 'Thời gian vào bãi',
-            dataKey: '',
-          },
-          {
-            width: 200,
-            label: 'Thời gia ra bãi',
-            dataKey: '',
-          },
-          {
-            width: 200,
-            label: 'Thời gian lưu bãi',
-            dataKey: '',
-          },
-          {
-            width: 200,
-            label: 'Số tiền',
-            dataKey: '',
-          },
-          {
-            width: 200,
-            label: 'Nhân viên vào/ra',
-            dataKey: '',
-          },
-          {
-            width: 200,
-            label: 'Nhân cho phép ra',
-            dataKey: '',
-          },
-          {
-            width: 200,
-            label: 'Loại hàng',
-            dataKey: '',
-          },
-          {
-            width: 200,
-            label: 'Cổng vào',
-            dataKey: '',
-          },
-          {
-            width: 200,
-            label: 'Cổng ra',
-            dataKey: '',
-          },
-          {
-            width: 200,
-            label: 'Phiếu hải quan',
-            dataKey: '',
-          },
-        ]}
-      />
-    </Paper>
-  );
+
+
+  render() {
+    const classes = useStyles;
+    const { dataFromHome } = this.props
+    console.log(dataFromHome, "dataTable")
+    return (
+
+      <TableContainer component={Paper}>
+        <Table className={classes.table} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell></TableCell>
+              <TableCell>STT vào bãi</TableCell>
+              <TableCell>Biển số xe vào/ra</TableCell>
+              <TableCell>Biển Cont</TableCell>
+              <TableCell>Biển Mooc</TableCell>
+              <TableCell>Loại xe</TableCell>
+              <TableCell>Mã số thẻ</TableCell>
+              <TableCell>Thời gian vào bãi</TableCell>
+              <TableCell>Thời gia ra bãi</TableCell>
+              <TableCell>Thời gian lưu bãi</TableCell>
+              <TableCell>Số tiền</TableCell>
+              <TableCell>Nhân viên vào/ra</TableCell>
+              <TableCell>Nhân cho phép ra</TableCell>
+              <TableCell>Loại hàng</TableCell>
+              <TableCell>Cổng vào</TableCell>
+              <TableCell>Cổng ra</TableCell>
+              <TableCell>Phiếu hải quan</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {dataFromHome && dataFromHome.data.data.map((item, i) => (
+              <TableRow key={i}>
+                <TableCell component="th" scope="row">
+                  {i + 1}
+                </TableCell>
+                <TableCell >{item.SoThuTuTrongNgay}</TableCell>
+                <TableCell >{item.BienXe || item.BienXeVao + " / " + (item.BienXeRa || "")}</TableCell>
+                <TableCell>{item.BienCont || item.BienContVao}</TableCell>
+                <TableCell>{item.BienMooc || item.BienMoocVao}</TableCell>
+                <TableCell>{(item.LoaiXeChiTiet || "Chưa có") || item.Name} </TableCell>
+                <TableCell>{item.MaSoTrenThe || "Chưa có"} </TableCell>
+                <TableCell>{GetFormatDate(item.NgayGioVao) || "Chưa có"}</TableCell>
+                <TableCell>{GetFormatDate(item.NgayGioRa) || "Chưa có"}</TableCell>
+                <TableCell>{item.ThoiGianTrongBai || "Chưa có"}</TableCell>
+                <TableCell>{countMoney(item.TongTienThu) || "Chưa có"}</TableCell>
+                <TableCell>{(item.NhanVienVao || "") + " / " + (item.NhanVienRa || "")}</TableCell>
+                <TableCell>{item.NhanVienDongYRa || "Chưa có"}</TableCell>
+                <TableCell>{item.LoaiHangChiTiet || item.LoaihangChiTiet}</TableCell>
+                <TableCell>{item.CongVaoName}</TableCell>
+                <TableCell>{item.CongRaName || "Chưa có"}</TableCell>
+                <TableCell>{item.PhieuHaiQuan}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  }
 }
-}
-export default withStyles(styles,{ withTheme: true })(TongHop);
+export default withStyles(useStyles)(MuiVirtualizedTable);

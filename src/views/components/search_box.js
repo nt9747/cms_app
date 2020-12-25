@@ -86,7 +86,7 @@ class SearchBox extends React.Component {sendData = (data) => {
       selectReport: 0,
       selectGate: 0,
       fromDate: '2017-05-24T10:30',
-      toDate: '2017-05-24T10:30',
+      toDate: '2020-10-24T10:30',
       plateNumber: '',
       portIn: '',
       numberCar: "",
@@ -143,7 +143,7 @@ class SearchBox extends React.Component {sendData = (data) => {
         BIENMOOC: this.state.bienMooc,
       })
       await this.setState({ data: res.data, isLoading: false },()=>{
-        this.sendData(res.data);
+        this.sendData(res);
       });
       console.log(res.data, "check data");
     } catch (err) {
