@@ -43,44 +43,6 @@ class MuiVirtualizedTable extends React.PureComponent {
   static defaultProps = {
     headerHeight: 48,
     rowHeight: 48,
-    fromDate: '01/10/2020 00:00:00',
-            toDate: '26/12/2020 00:00:00',
-            plateNumber: '',
-            portIn: '',
-            numberCar: "",
-            loaiHang: "",
-            data: "",
-            isLoading: true,
-            page: 1,
-            PortOut: '',
-            SelectCong: "/listCar/listCarInOut?",
-            total: "",
-            dataXe: "",
-            loaiXe: "",
-            showBienXe: true,
-            showLoaiXe: false,
-            showLoaiHang: false,
-            pictureDauXeVao: "",
-            pictureDauXeRa: "",
-            pictureVaoFull: "",
-            pictureRaFull: "",
-            pictureBienSo: "",
-            dataPicture: "",
-            totalPage: "",
-            namePort: "",
-            dataThongKeXe: "",
-            thongKeLoaiXe: "/Statistic/statisticCarInOut",
-            TongKetCong: "",
-            countIn: "",
-            countOut: "",
-            countTon: "",
-            totalMoney: "",
-            codeThongKeXe: "",
-            limitPage: "20",
-            orderNumber: "",
-            bienCont: "",
-            bienMooc: "",
-            dataHang: "",
   };
 
   getRowClassName = ({ index }) => {
@@ -199,56 +161,18 @@ class TongHop extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      dataTable: "",
     };
   }
-
   handleTextChange(field, event) {
     this.setState({
       [field]: event.target.value,
     });
   }
-  async list() {
-    await this.setState({
-        isLoading: true
-    })
-    try {
-        this.setState({page: 1})
-        const res = await requestGetListCar({
-            FROMDATE: this.state.fromDate,
-            TODATE: this.state.toDate,
-            PLATENUMBER: this.state.plateNumber,
-            PORTIN: this.state.portIn,
-            PORTOUT: this.state.PortOut,
-            NUMBERCAR: this.state.numberCar,
-            LOAIHANG: this.state.loaiHang,
-            PAGE: this.state.page,
-            CONG: this.state.SelectCong,
-            LOAIXE: this.state.loaiXe,
-            LIMIT: this.state.limitPage,
-            ORDERNUMBER: this.state.orderNumber,
-            BIENCONT: this.state.bienCont,
-            BIENMOOC: this.state.bienMooc,
-
-        })
-        await this.setState({ isActive: null, data: res.data, total: res.data.total, previousPage: res.data.previousPage, nextPage: res.data.nextPage });
-        this.setState({ totalPage: Math.ceil(this.state.total / this.state.limitPage)})
-        if ((this.state.SelectCong == "/listCar/listCarIn?" && (this.state.PortOut == "2" || this.state.PortOut == "4")) || (this.state.SelectCong == "/listCar/listCarOut?" && (this.state.portIn == "0" || (this.state.portIn == "1" && this.state.PortOut == null)))) {
-            alert("Wrong choose!")
-            window.location.href = '/home'
-        }
-        if ((this.state.SelectCong == "/listCar/listCarParking?" && this.state.namePort == "3")) {
-            alert("Cổng quay đầu ko xem được danh sách xe tồn, vui lòng chọn đúng cổng!")
-            window.location.href = '/home'
-        }
-      } catch (err) {
-        await this.setState({
-            isLoading: false
-        }, () => console.log(err))
-    }
-  }
   render() { 
   return (
     <Paper style={{ height: 300, width: '160%' }}>
+      {console.log(this.props.dataFromHome, "check data table")}
       <VirtualizedTable
         rowCount={rows.length}
         rowGetter={({ index }) => rows[index]}

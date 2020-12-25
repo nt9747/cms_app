@@ -126,19 +126,26 @@ const styles = theme => ({
   },
 });
 
+
+
 function countMoney(n) {
   n = parseFloat(n);
   var b = n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,') + " vnd";
   if (b == "NaN vnd") {
-      return ""
+    return ""
   }
   else {
-      return b;
+    return b;
   }
 }
 
 
 class Home extends React.Component {
+  state = { message: "" }
+  callbackFunction = (childData) => {
+    this.setState({ dataSearchBox: childData })
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -167,10 +174,10 @@ class Home extends React.Component {
     };
   }
   handleDrawerOpen = () => {
-    this.setState({open: true});
+    this.setState({ open: true });
   };
   handleDrawerClose = () => {
-    this.setState({open: false});
+    this.setState({ open: false });
   };
 
 
@@ -182,133 +189,75 @@ class Home extends React.Component {
 
   async list() {
     await this.setState({
-        isLoading: true
+      isLoading: true
     })
     try {
-        this.setState({page: 1})
-        const res2 = await requestGetListLoaiXe({
+      this.setState({ page: 1 })
+      const res2 = await requestGetListLoaiXe({
+        FROMDATE: this.state.fromDate,
+        TODATE: this.state.toDate,
+        PLATENUMBER: this.state.plateNumber,
+        PORTOUT: this.state.PortOut,
+        PORTIN: this.state.portIn,
+        NUMBERCAR: this.state.numberCar,
+        LOAIHANG: this.state.loaiHang,
+        LOAIXE: this.state.loaiXe,
+        THONGKELOAIXE: this.state.thongKeLoaiXe,
+        BIENCONT: this.state.bienCont,
+        BIENMOOC: this.state.bienMooc,
+      })
+      await this.setState({ countIn: res2.data.countIn, countOut: res2.data.countOut, totalMoney: res2.data.totalMoney })
+      if (this.state.namePort == 1) {
+        this.setState({
+          countInVn: this.state.countIn, countOutVn: this.state.countOut, countDoanhThuVn: this.state.totalMoney,
+          countInCN: '0', countOutCN: '0', countDoanhThuCn: '0', countTonCN: '0'
+        })
+        this.setState({ countTonVn: this.state.countInVn - this.state.countOutVn })
+      }
+      if (this.state.namePort == 2) {
+        this.setState({
+          countInVn: '0', countOutVn: '0', countDoanhThuVn: '0', countTonVn: '0',
+          countInCN: this.state.countIn, countOutCN: this.state.countOut, countDoanhThuCn: this.state.totalMoney
+        })
+        this.setState({ countTonCN: this.state.countInCN - this.state.countOutCN })
+      }
+      if (this.state.namePort == 3) {
+        this.setState({
+          countInVn: this.state.countIn, countOutVn: this.state.countOut, countDoanhThuVn: this.state.totalMoney,
+          countInCN: '0', countOutCN: '0', countDoanhThuCn: '0', countTonCN: '0'
+        })
+        this.setState({ countTonVn: this.state.countInVn - this.state.countOutVn })
+      }
+      if (this.state.namePort == 4) {
+        this.setState({
+          countInVn: '0', countOutVn: '0', countDoanhThuVn: '0', countTonVn: '0',
+          countInCN: this.state.countIn, countOutCN: this.state.countOut, countDoanhThuCn: this.state.totalMoney
+        })
+        this.setState({ countTonCN: this.state.countInCN - this.state.countOutCN })
+      }
+      if (this.state.namePort == 5) {
+        this.setState({
+          countInVn: '0', countOutVn: '0', countDoanhThuVn: '0', countTonVn: '0',
+          countInCN: this.state.countIn, countOutCN: this.state.countOut, countDoanhThuCn: this.state.totalMoney
+        })
+        this.setState({ countTonCN: this.state.countInCN - this.state.countOutCN })
+      }
+      if (this.state.namePort == 6) {
+        await this.setState({
+          isLoading: true
+        })
+        const res3 = await requestGetListLoaiXe({
           FROMDATE: this.state.fromDate,
           TODATE: this.state.toDate,
           PLATENUMBER: this.state.plateNumber,
-          PORTOUT: this.state.PortOut,
-          PORTIN: this.state.portIn,
+          PORTOUT: this.state.PortOutVN,
+          PORTIN: this.state.portInVN,
           NUMBERCAR: this.state.numberCar,
           LOAIHANG: this.state.loaiHang,
           LOAIXE: this.state.loaiXe,
           THONGKELOAIXE: this.state.thongKeLoaiXe,
           BIENCONT: this.state.bienCont,
           BIENMOOC: this.state.bienMooc,
-      })
-      await this.setState({countIn: res2.data.countIn, countOut: res2.data.countOut, totalMoney: res2.data.totalMoney })
-      if (this.state.namePort == 1) {
-          this.setState({
-              countInVn: this.state.countIn, countOutVn: this.state.countOut, countDoanhThuVn: this.state.totalMoney,
-              countInCN: '0', countOutCN: '0', countDoanhThuCn: '0', countTonCN: '0'
-          })
-          this.setState({ countTonVn: this.state.countInVn - this.state.countOutVn })
-      }
-      if (this.state.namePort == 2) {
-          this.setState({
-              countInVn: '0', countOutVn: '0', countDoanhThuVn: '0', countTonVn: '0',
-              countInCN: this.state.countIn, countOutCN: this.state.countOut, countDoanhThuCn: this.state.totalMoney
-          })
-          this.setState({ countTonCN: this.state.countInCN - this.state.countOutCN })
-      }
-      if (this.state.namePort == 3) {
-          this.setState({
-              countInVn: this.state.countIn, countOutVn: this.state.countOut, countDoanhThuVn: this.state.totalMoney,
-              countInCN: '0', countOutCN: '0', countDoanhThuCn: '0', countTonCN: '0'
-          })
-          this.setState({ countTonVn: this.state.countInVn - this.state.countOutVn })
-      }
-      if (this.state.namePort == 4) {
-          this.setState({
-              countInVn: '0', countOutVn: '0', countDoanhThuVn: '0', countTonVn: '0',
-              countInCN: this.state.countIn, countOutCN: this.state.countOut, countDoanhThuCn: this.state.totalMoney
-          })
-          this.setState({ countTonCN: this.state.countInCN - this.state.countOutCN })
-      }
-      if (this.state.namePort == 5) {
-          this.setState({
-              countInVn: '0', countOutVn: '0', countDoanhThuVn: '0', countTonVn: '0',
-              countInCN: this.state.countIn, countOutCN: this.state.countOut, countDoanhThuCn: this.state.totalMoney
-          })
-          this.setState({ countTonCN: this.state.countInCN - this.state.countOutCN })
-      }
-      if (this.state.namePort == 6) {
-          await this.setState({
-              isLoading: true
-          })
-              const res3 = await requestGetListLoaiXe({
-                  FROMDATE: this.state.fromDate,
-                  TODATE: this.state.toDate,
-                  PLATENUMBER: this.state.plateNumber,
-                  PORTOUT: this.state.PortOutVN,
-                  PORTIN: this.state.portInVN,
-                  NUMBERCAR: this.state.numberCar,
-                  LOAIHANG: this.state.loaiHang,
-                  LOAIXE: this.state.loaiXe,
-                  THONGKELOAIXE: this.state.thongKeLoaiXe,
-                  BIENCONT: this.state.bienCont,
-                  BIENMOOC: this.state.bienMooc,
-              })
-              await this.setState({ countInVn: res3.data.countIn, countOutVn: res3.data.countOut, countDoanhThuVn: res3.data.totalMoney })
-              this.setState({ countTonVn: this.state.countInVn - this.state.countOutVn })
-              console.log(this.state.portInVN, this.state.PortOutVN)
-
-
-              const res4 = await requestGetListLoaiXe({
-                  FROMDATE: this.state.fromDate,
-                  TODATE: this.state.toDate,
-                  PLATENUMBER: this.state.plateNumber,
-                  PORTOUT: this.state.PortOutCN,
-                  PORTIN: this.state.portInCN,
-                  NUMBERCAR: this.state.numberCar,
-                  LOAIHANG: this.state.loaiHang,
-                  LOAIXE: this.state.loaiXe,
-                  THONGKELOAIXE: this.state.thongKeLoaiXe,
-                  BIENCONT: this.state.bienCont,
-                  BIENMOOC: this.state.bienMooc,
-              })
-              await this.setState({countInCN: res4.data.countIn, countOutCN: res4.data.countOut, countDoanhThuCn: res4.data.totalMoney })
-              this.setState({ countTonCN: this.state.countInCN - this.state.countOutCN })
-              console.log(this.state.portInCN, this.state.portOutCN)
-          }
-          if (this.state.countTonVn < 0){
-              this.setState({countTonVn: 0})
-          }
-          if (this.state.countTonCN < 0){
-              this.setState({countTonCN: 0})
-          }
-          this.setState({isLoading: false})
-  } catch (err) {
-          await this.setState({
-              isLoading: false
-          }, () => console.log(err))
-      }
-  }
-
-  async start() {
-    await this.setState({
-        isLoading: true
-    })
-    try {
-        const res = await resquestGetListCarType({
-        })
-        await this.setState({ dataXe: res.data });
-
-        const res3 = await requestGetListLoaiXe({
-            FROMDATE: this.state.fromDate,
-            TODATE: this.state.toDate,
-            PLATENUMBER: this.state.plateNumber,
-            PORTOUT: this.state.PortOutVN,
-            PORTIN: this.state.portInVN,
-            NUMBERCAR: this.state.numberCar,
-            LOAIHANG: this.state.loaiHang,
-            LOAIXE: this.state.loaiXe,
-            THONGKELOAIXE: this.state.thongKeLoaiXe,
-            BIENCONT: this.state.bienCont,
-            BIENMOOC: this.state.bienMooc,
         })
         await this.setState({ countInVn: res3.data.countIn, countOutVn: res3.data.countOut, countDoanhThuVn: res3.data.totalMoney })
         this.setState({ countTonVn: this.state.countInVn - this.state.countOutVn })
@@ -316,41 +265,99 @@ class Home extends React.Component {
 
 
         const res4 = await requestGetListLoaiXe({
-            FROMDATE: this.state.fromDate,
-            TODATE: this.state.toDate,
-            PLATENUMBER: this.state.plateNumber,
-            PORTOUT: this.state.PortOutCN,
-            PORTIN: this.state.portInCN,
-            NUMBERCAR: this.state.numberCar,
-            LOAIHANG: this.state.loaiHang,
-            LOAIXE: this.state.loaiXe,
-            THONGKELOAIXE: this.state.thongKeLoaiXe,
-            BIENCONT: this.state.bienCont,
-            BIENMOOC: this.state.bienMooc,
+          FROMDATE: this.state.fromDate,
+          TODATE: this.state.toDate,
+          PLATENUMBER: this.state.plateNumber,
+          PORTOUT: this.state.PortOutCN,
+          PORTIN: this.state.portInCN,
+          NUMBERCAR: this.state.numberCar,
+          LOAIHANG: this.state.loaiHang,
+          LOAIXE: this.state.loaiXe,
+          THONGKELOAIXE: this.state.thongKeLoaiXe,
+          BIENCONT: this.state.bienCont,
+          BIENMOOC: this.state.bienMooc,
         })
-        await this.setState({countInCN: res4.data.countIn, countOutCN: res4.data.countOut, countDoanhThuCn: res4.data.totalMoney })
+        await this.setState({ countInCN: res4.data.countIn, countOutCN: res4.data.countOut, countDoanhThuCn: res4.data.totalMoney })
         this.setState({ countTonCN: this.state.countInCN - this.state.countOutCN })
         console.log(this.state.portInCN, this.state.portOutCN)
-    
-    if (this.state.countTonVn < 0){
-        this.setState({countTonVn: 0})
+      }
+      if (this.state.countTonVn < 0) {
+        this.setState({ countTonVn: 0 })
+      }
+      if (this.state.countTonCN < 0) {
+        this.setState({ countTonCN: 0 })
+      }
+      this.setState({ isLoading: false })
+    } catch (err) {
+      await this.setState({
+        isLoading: false
+      }, () => console.log(err))
     }
-    if (this.state.countTonCN < 0){
-        this.setState({countTonCN: 0})
-    }
+  }
+
+  async start() {
+    await this.setState({
+      isLoading: true
+    })
+    try {
+      const res = await resquestGetListCarType({
+      })
+      await this.setState({ dataXe: res.data });
+
+      const res3 = await requestGetListLoaiXe({
+        FROMDATE: this.state.fromDate,
+        TODATE: this.state.toDate,
+        PLATENUMBER: this.state.plateNumber,
+        PORTOUT: this.state.PortOutVN,
+        PORTIN: this.state.portInVN,
+        NUMBERCAR: this.state.numberCar,
+        LOAIHANG: this.state.loaiHang,
+        LOAIXE: this.state.loaiXe,
+        THONGKELOAIXE: this.state.thongKeLoaiXe,
+        BIENCONT: this.state.bienCont,
+        BIENMOOC: this.state.bienMooc,
+      })
+      await this.setState({ countInVn: res3.data.countIn, countOutVn: res3.data.countOut, countDoanhThuVn: res3.data.totalMoney })
+      this.setState({ countTonVn: this.state.countInVn - this.state.countOutVn })
+      console.log(this.state.portInVN, this.state.PortOutVN)
+
+
+      const res4 = await requestGetListLoaiXe({
+        FROMDATE: this.state.fromDate,
+        TODATE: this.state.toDate,
+        PLATENUMBER: this.state.plateNumber,
+        PORTOUT: this.state.PortOutCN,
+        PORTIN: this.state.portInCN,
+        NUMBERCAR: this.state.numberCar,
+        LOAIHANG: this.state.loaiHang,
+        LOAIXE: this.state.loaiXe,
+        THONGKELOAIXE: this.state.thongKeLoaiXe,
+        BIENCONT: this.state.bienCont,
+        BIENMOOC: this.state.bienMooc,
+      })
+      await this.setState({ countInCN: res4.data.countIn, countOutCN: res4.data.countOut, countDoanhThuCn: res4.data.totalMoney })
+      this.setState({ countTonCN: this.state.countInCN - this.state.countOutCN })
+      console.log(this.state.portInCN, this.state.portOutCN)
+
+      if (this.state.countTonVn < 0) {
+        this.setState({ countTonVn: 0 })
+      }
+      if (this.state.countTonCN < 0) {
+        this.setState({ countTonCN: 0 })
+      }
 
     } catch (err) {
-        await this.setState({
-            isLoading: false
-        }, () => console.log(err))
+      await this.setState({
+        isLoading: false
+      }, () => console.log(err))
     }
-}
-
+  }
 
   render() {
     const { classes } = this.props;
     const { open } = this.state;
     return (
+
       <div className={classes.root}>
         <CssBaseline />
         <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
@@ -401,73 +408,74 @@ class Home extends React.Component {
           <Container maxWidth="xl" className={classes.container}>
             {/* serach box */}
             <Paper>
-              <SearchBox></SearchBox>
+              <SearchBox  parentCallback = {this.callbackFunction}/>
+                 {console.log(this.state.dataSearchBox, "check")}  
             </Paper>
-
+          
             {/* end box */}
             <Grid container spacing={1}>
               {/* Chart */}
               <Grid item xs={12} md={12} lg={9}>
                 <Paper className={clsx(classes.paper, classes.fixedHeight)}>
                   <Pagination count={10} color="primary" />
-                  <br/><br/>
-              <MuiVirtualizedTable></MuiVirtualizedTable>
+                  <br /><br />
+                  <MuiVirtualizedTable dataFromHome = {this.state.dataSearchBox}></MuiVirtualizedTable>
                 </Paper>
               </Grid>
               {/* Recent Deposits */}
               <Grid item xs={12} md={4} lg={3}>
                 <Paper className={clsx(classes.paper, classes.fixedHeight)}>
-                <div style={{ height: 250, width: '100%' }}>
-              <Table className={classes.table} aria-label="simple table">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell></TableCell>
-                        <TableCell align="center">Vào</TableCell>
-                        <TableCell align="center">Ra</TableCell>
-                        <TableCell align="center">Tồn</TableCell>
-                        <TableCell align="center">Doanh thu</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>Việt Nam</TableCell>
-                        <TableCell align="center">{this.state.countInVn}</TableCell>
-                        <TableCell align="center">{this.state.countOutVn}</TableCell>
-                        <TableCell align="center">{this.state.countTonVn}</TableCell>
-                        <TableCell align="center">{countMoney(this.state.countDoanhThuVn)}</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell>Trung Quốc</TableCell>
-                        <TableCell align="center">{this.state.countInCN}</TableCell>
-                        <TableCell align="center">{this.state.countOutCN}</TableCell>
-                        <TableCell align="center">{this.state.countTonCN}</TableCell>
-                        <TableCell align="center">{countMoney(this.state.countDoanhThuCn)}</TableCell>
-                      </TableRow>
-                    </TableBody>
-              </Table>
-              </div>
+                  <div style={{ height: 250, width: '100%' }}>
+                    <Table className={classes.table} aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell></TableCell>
+                          <TableCell align="center">Vào</TableCell>
+                          <TableCell align="center">Ra</TableCell>
+                          <TableCell align="center">Tồn</TableCell>
+                          <TableCell align="center">Doanh thu</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>Việt Nam</TableCell>
+                          <TableCell align="center">{this.state.countInVn}</TableCell>
+                          <TableCell align="center">{this.state.countOutVn}</TableCell>
+                          <TableCell align="center">{this.state.countTonVn}</TableCell>
+                          <TableCell align="center">{countMoney(this.state.countDoanhThuVn)}</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell>Trung Quốc</TableCell>
+                          <TableCell align="center">{this.state.countInCN}</TableCell>
+                          <TableCell align="center">{this.state.countOutCN}</TableCell>
+                          <TableCell align="center">{this.state.countTonCN}</TableCell>
+                          <TableCell align="center">{countMoney(this.state.countDoanhThuCn)}</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
                   <div >
-                            <div >
-                                <h3>Ảnh vào</h3>
-                            </div>
-                            <div>
-                                <div>
-                                    <div >
-                                        <input type="text"/>
-                                    </div>
-                                </div>
-                            </div>
+                    <div >
+                      <h3>Ảnh vào</h3>
+                    </div>
+                    <div>
+                      <div>
+                        <div >
+                          <input type="text" />
+                        </div>
+                      </div>
+                    </div>
 
-                            <div >
-                                <h3 >Ảnh ra</h3>
-                            </div>
-                            <div >
-                                <div >
-                                    <div >
-                                        <input type="text"/>
-                                    </div>
-                                </div>
-                            </div>
+                    <div >
+                      <h3 >Ảnh ra</h3>
+                    </div>
+                    <div >
+                      <div >
+                        <div >
+                          <input type="text" />
+                        </div>
+                      </div>
+                    </div>
 
                   </div>
                 </Paper>
@@ -488,4 +496,4 @@ class Home extends React.Component {
     );
   }
 }
-export default withStyles(styles,{ withTheme: true })(Home);
+export default withStyles(styles, { withTheme: true })(Home);

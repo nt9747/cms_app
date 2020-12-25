@@ -75,7 +75,9 @@ function GetFormatDatePicker(a) {
   return day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + seconds
 }
 
-class SearchBox extends React.Component {
+class SearchBox extends React.Component {sendData = (data) => {
+  this.props.parentCallback(data);
+}
   constructor(props) {
     super(props);
 
@@ -101,6 +103,7 @@ class SearchBox extends React.Component {
       limitPage: 500,
       bienCont: "",
       bienMooc: "",
+      orderNumber: "",
     };
   }
   async list() {
@@ -139,7 +142,9 @@ class SearchBox extends React.Component {
         BIENCONT: this.state.bienCont,
         BIENMOOC: this.state.bienMooc,
       })
-      await this.setState({ data: res.data, isLoading: false });
+      await this.setState({ data: res.data, isLoading: false },()=>{
+        this.sendData(res.data);
+      });
       console.log(res.data, "check data");
     } catch (err) {
       await this.setState({
@@ -195,16 +200,16 @@ class SearchBox extends React.Component {
   handleAPIChange(field, event) {
     this.setState({ [field]: event.target.value })
     if (event.target.value == 0) {
-      this.setState({ selectReport: '/listCar/listCarInOut?' })
+      this.setState({ selectReport: '/listCar/listCarInOut?', thongKeLoaiXe: "/Statistic/statisticCarInOut" })
     }
     else if (event.target.value == 1) {
-      this.setState({ selectReport: '/listCar/listCarIn?' })
+      this.setState({ selectReport: '/listCar/listCarIn?', thongKeLoaiXe: "/Statistic/statisticCarIn" })
     }
     else if (event.target.value == 2) {
-      this.setState({ selectReport: '/listCar/listCarOut?' })
+      this.setState({ selectReport: '/listCar/listCarOut?', thongKeLoaiXe: "/Statistic/statisticCarOut" })
     }
     else if (event.target.value == 3)
-      this.setState({ selectReport: '/listCar/listCarParking?' })
+      this.setState({ selectReport: '/listCar/listCarParking?', thongKeLoaiXe: "/Statistic/statisticCarParking" })
   }
 
   componentDidMount() {
