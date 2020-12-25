@@ -171,6 +171,7 @@ class Home extends React.Component {
       PortOutVN: "2",
       portInCN: "1",
       portOutCN: "3",
+      page: "1"
     };
   }
   handleDrawerOpen = () => {
@@ -179,7 +180,9 @@ class Home extends React.Component {
   handleDrawerClose = () => {
     this.setState({ open: false });
   };
-
+  // LoadingPage(){
+    
+  // }
 
   handleTextChange(field, event) {
     this.setState({
@@ -187,12 +190,16 @@ class Home extends React.Component {
     });
   }
 
+  handleChange = (event, value) => {
+    this.setState({page: value},()=>this.refs.search_box.list())
+  };
+
 
   render() {
     const { classes } = this.props;
     const { open } = this.state;
+    const {dataSearchBox} = this.state;
     return (
-
       <div className={classes.root}>
         <CssBaseline />
         <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
@@ -243,18 +250,22 @@ class Home extends React.Component {
           <Container maxWidth="xl" className={classes.container}>
             {/* serach box */}
             <Paper>
-              <SearchBox  parentCallback = {this.callbackFunction}/>
-                 {console.log(this.state.dataSearchBox, "check")}  
+              <SearchBox ref="search_box" parentCallback={this.callbackFunction} dataFromHome = {this.state.page}/>
             </Paper>
-          
+
             {/* end box */}
             <Grid container spacing={1}>
               {/* Chart */}
               <Grid item xs={12} md={12} lg={9}>
                 <Paper className={clsx(classes.paper, classes.fixedHeight)}>
-                  <Pagination count={50} color="primary" />
+                  <Typography>Page: {this.state.page}</Typography>
+                  <Pagination count= {dataSearchBox && Math.ceil(dataSearchBox.data.total / dataSearchBox.data.limit)}
+                   page={this.state.page} onChange={this.handleChange.bind(this)} onClick={this.LoadingPage}
+                   />
+                  {console.log(this.state.page, "page")}
                   <br /><br />
-                  <MuiVirtualizedTable dataFromHome = {this.state.dataSearchBox}></MuiVirtualizedTable>
+                  <MuiVirtualizedTable dataPage = {this.state.page} dataFromHome={this.state.dataSearchBox}
+                  ></MuiVirtualizedTable>
                 </Paper>
               </Grid>
               {/* Recent Deposits */}

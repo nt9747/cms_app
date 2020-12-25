@@ -86,7 +86,7 @@ class SearchBox extends React.Component {sendData = (data) => {
       selectReport: 0,
       selectGate: 0,
       fromDate: '2017-05-24T10:30',
-      toDate: '2020-10-24T10:30',
+      toDate: '2022-10-24T10:30',
       plateNumber: '',
       portIn: '',
       numberCar: "",
@@ -100,7 +100,7 @@ class SearchBox extends React.Component {sendData = (data) => {
       portIn: "",
       PortOut: "",
       selectLoaiXe: "",
-      limitPage: 500,
+      limitPage: 50,
       bienCont: "",
       bienMooc: "",
       orderNumber: "",
@@ -110,22 +110,9 @@ class SearchBox extends React.Component {sendData = (data) => {
     await this.setState({
       isLoading: true
     })
-    console.log(GetFormatDatePicker(this.state.fromDate))
-    console.log(GetFormatDatePicker(this.state.toDate))
-    console.log(this.state.plateNumber, "bienXe")
-    console.log(this.state.portIn, "portIn")
-    console.log(this.state.PortOut, "portOut")
-    console.log(this.state.numberCar, "Ma The")
-    console.log(this.state.loaiHang, "Loai Hang")
-    console.log(this.state.page, "page")
-    console.log(this.state.selectReport, "Cong")
-    console.log(this.state.selectLoaiXe, "Loai Xe")
-    console.log(this.state.limitPage, "limitPage")
-    console.log(this.state.orderNumber, "So Thu Tu")
-    console.log(this.state.bienCont, "bienCont")
-    console.log(this.state.bienMooc, "bienMooc")
+    this.setState({page: this.props.dataFromHome})
+    console.log(this.state.page, "page Search box")
     try {
-      this.setState({ page: 1 })
       const res = await requestGetListCar({
         FROMDATE: GetFormatDatePicker(this.state.fromDate),
         TODATE: GetFormatDatePicker(this.state.toDate),
@@ -224,7 +211,6 @@ class SearchBox extends React.Component {sendData = (data) => {
       <div>
         <form className={classes.root} noValidate>
           <CssBaseline />
-
           <Grid container spacing={3} className={classes.selectEmpty}>
             <Grid item>
               <TextField
@@ -288,10 +274,6 @@ class SearchBox extends React.Component {sendData = (data) => {
                 value={this.state.numberCar}
                 onChange={(e) => this.handleTextChange('numberCar', e)}
               />
-            </Grid>
-
-            <Grid item>
-              <Grouped></Grouped>
             </Grid>
           </Grid>
 

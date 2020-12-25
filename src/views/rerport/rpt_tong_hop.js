@@ -74,7 +74,7 @@ class MuiVirtualizedTable extends React.Component {
 
   render() {
     const classes = useStyles;
-    const { dataFromHome } = this.props
+    const { dataFromHome, dataPage } = this.props
     console.log(dataFromHome, "dataTable")
     return (
 
@@ -82,7 +82,7 @@ class MuiVirtualizedTable extends React.Component {
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell></TableCell>
+              <TableCell>STT</TableCell>
               <TableCell>STT vào bãi</TableCell>
               <TableCell>Biển số xe vào/ra</TableCell>
               <TableCell>Biển Cont</TableCell>
@@ -105,7 +105,7 @@ class MuiVirtualizedTable extends React.Component {
             {dataFromHome && dataFromHome.data.data.map((item, i) => (
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
-                  {i + 1}
+                  {(dataPage - 1) * 50 + i + 1}
                 </TableCell>
                 <TableCell >{item.SoThuTuTrongNgay}</TableCell>
                 <TableCell >{item.BienXe || item.BienXeVao + " / " + (item.BienXeRa || "")}</TableCell>
